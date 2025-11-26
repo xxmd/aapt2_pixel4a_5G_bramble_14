@@ -36,10 +36,10 @@ class StdErrDiagnostics : public android::IDiagnostics {
 
     switch (level) {
       case Level::Error:
-        num_errors_++;
-        if (num_errors_ > 20) {
-          return;
-        }
+        // num_errors_++;
+        // if (num_errors_ > 20) {
+        //   return;
+        // }
         tag = "error";
         break;
 
