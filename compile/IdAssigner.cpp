@@ -16,13 +16,13 @@
 
 #include "compile/IdAssigner.h"
 
+#include <iostream>
 #include <map>
 #include <unordered_map>
 
+#include "ResourceTable.h"
 #include "android-base/expected.h"
 #include "android-base/logging.h"
-
-#include "ResourceTable.h"
 #include "process/IResourceTableConsumer.h"
 #include "util/Util.h"
 
@@ -37,7 +37,7 @@ using Result = expected<T, std::string>;
 
 template <typename Id, typename Key>
 struct NextIdFinder {
-  explicit NextIdFinder(Id start_id = 0u) : next_id_(start_id){};
+  explicit NextIdFinder(Id start_id = 0u) : next_id_(start_id) {};
 
   // Attempts to reserve an identifier for the specified key.
   // If the identifier is already reserved by a different key, an error message is returned.
@@ -61,7 +61,7 @@ struct NextIdFinder {
 
 struct TypeGroup {
   explicit TypeGroup(uint8_t package_id, uint8_t type_id)
-      : package_id_(package_id), type_id_(type_id){};
+      : package_id_(package_id), type_id_(type_id) {};
 
   // Attempts to reserve the resource id for the specified resource name.
   // If the id is already reserved by a different name, an error message is returned.
@@ -127,6 +127,13 @@ bool IdAssigner::Consume(IAaptContext* context, ResourceTable* table) {
   IdAssignerContext assigned_ids(context->GetCompilationPackage(), context->GetPackageId());
   for (auto& package : table->packages) {
     for (auto& type : package->types) {
+
+      // ===> 遍历并打印每个type的详细信息
+      std::cout << "type->named_type.name: " << type->named_type.name
+                << "type->named_type.type: " << type->named_type.type
+                << "type->entries.size(): " << type->entries.size() << std::endl;
+      // <=== 遍历并打印每个type的详细信息
+
       for (auto& entry : type->entries) {
         const ResourceName name(package->name, type->named_type, entry->name);
         if (entry->id && !assigned_ids.ReserveId(name, entry->id.value(), entry->visibility,
@@ -297,6 +304,15 @@ bool IdAssignerContext::ReserveId(const ResourceName& name, ResourceId id,
                   << "can't assign ID " << id << " to resource " << name
                   << " because type already has ID " << std::hex << (int)id.type_id());
       return false;
+    } else {
+      if (non_staged_type.second) {
+
+        // ===> 打印分配成功的type和id
+        std::cout << "The type " << name.type.type
+                  << "is assigned id of: " << std::hex << (int)id.type_id() << std::endl;
+        // <=== 打印分配成功的type和id
+
+      }
     }
   }
 
