@@ -649,6 +649,7 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
   if (can_be_item) {
     const auto item_iter = elToItemMap.find(resource_type);
     if (item_iter != elToItemMap.end()) {
+
       // This is an item, record its type and format and start parsing.
 
       if (!maybe_name) {
@@ -660,6 +661,15 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
       out_resource->name.type =
           ResourceNamedTypeWithDefaultName(item_iter->second.type).ToResourceNamedType();
       out_resource->name.entry = std::string(maybe_name.value());
+
+      // ===>
+      std::cout << "1.can_be_item"
+                << " resource_type: "<< resource_type
+                << " item_iter->first: "<< item_iter->first
+                << " out_resource->name.type: "<< out_resource->name.type
+                << " out_resource->name.entry: "<< out_resource->name.entry
+                << std::endl;
+      //<===
 
       // Only use the implied format of the type when there is no explicit format.
       if (resource_format == 0u) {
@@ -687,6 +697,15 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
         }
 
         out_resource->name.entry = std::string(maybe_name.value());
+
+        // ===>
+        std::cout << "1.can_be_bag"
+                  << " resource_type: "<< resource_type
+                  << " item_iter->first: "<< bag_iter->first
+                  << " out_resource->name.type: "<< "bag"
+                  << " out_resource->name.entry: "<< out_resource->name.entry
+                  << std::endl;
+        //<===
       }
 
       // Call the associated parse method. The type will be filled in by the
@@ -712,6 +731,15 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
       out_resource->name.type = parsed_type->ToResourceNamedType();
       out_resource->name.entry = std::string(maybe_name.value());
       out_resource->value = ParseXml(parser, android::ResTable_map::TYPE_REFERENCE, kAllowRawString);
+
+      // ===>
+      std::cout << "3.can_be_item"
+                << " resource_type: "<< resource_type
+                << " out_resource->name.type: "<< out_resource->name.type
+                << " out_resource->name.entry: "<< out_resource->name.entry
+                << std::endl;
+      //<===
+
       if (!out_resource->value) {
         diag_->Error(android::DiagMessage(out_resource->source)
                      << "invalid value for type '" << *parsed_type << "'. Expected a reference");
