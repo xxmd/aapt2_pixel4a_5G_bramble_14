@@ -67,6 +67,17 @@ enum class ResourceType {
   kStyleable,
   kTransition,
   kXml,
+
+  // 额外非标准资源类型
+  kDimen2,
+  kDrawable2,
+  kDrawable3,
+  kDrawable4,
+  kDrawable5,
+  kDrawable6,
+  kLayout2,
+  kRaw2,
+  kStyle2,
 };
 
 android::StringPiece to_string(ResourceType type);

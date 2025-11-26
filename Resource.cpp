@@ -100,6 +100,26 @@ StringPiece to_string(ResourceType type) {
       return "transition";
     case ResourceType::kXml:
       return "xml";
+
+      // 补充case分支
+    case ResourceType::kDimen2:
+      return "dimen.2";
+    case ResourceType::kDrawable2:
+      return "drawable.2";
+    case ResourceType::kDrawable3:
+      return "drawable.3";
+    case ResourceType::kDrawable4:
+      return "drawable.4";
+    case ResourceType::kDrawable5:
+      return "drawable.5";
+    case ResourceType::kDrawable6:
+      return "drawable.6";
+    case ResourceType::kLayout2:
+      return "layout.2";
+    case ResourceType::kRaw2:
+      return "raw.2";
+    case ResourceType::kStyle2:
+      return "style.2";
   }
   return {};
 }
@@ -132,6 +152,17 @@ static const std::map<StringPiece, ResourceType> sResourceTypeMap{
     {"styleable", ResourceType::kStyleable},
     {"transition", ResourceType::kTransition},
     {"xml", ResourceType::kXml},
+
+    // 非标资源类型
+    {"dimen.2", ResourceType::kDimen2},
+    {"drawable.2", ResourceType::kDrawable2},
+    {"drawable.3", ResourceType::kDrawable3},
+    {"drawable.4", ResourceType::kDrawable4},
+    {"drawable.5", ResourceType::kDrawable5},
+    {"drawable.6", ResourceType::kDrawable6},
+    {"layout.2", ResourceType::kLayout2},
+    {"raw.2", ResourceType::kRaw2},
+    {"style.2", ResourceType::kStyle2},
 };
 
 ResourceNamedTypeRef ResourceNamedTypeWithDefaultName(ResourceType t) {
