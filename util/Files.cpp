@@ -51,19 +51,12 @@ namespace file {
 FileType GetFileType(const std::string& path) {
   std::wstring path_utf16;
   if (!::android::base::UTF8PathToWindowsLongPath(path.c_str(), &path_utf16)) {
-    // ===> 打印GetFileType
-    std::cout << "!::android::base::UTF8PathToWindowsLongPath " << path << std::endl;
-    // <=== 打印GetFileType
     return FileType::kNonExistant;
   }
 
   DWORD result = GetFileAttributesW(path_utf16.c_str());
   if (result == INVALID_FILE_ATTRIBUTES) {
-    // ===> 打印GetFileType
-    std::wcout << L"path_utf16: " << path_utf16 << std::endl;
-    std::cout << "INVALID_FILE_ATTRIBUTES " << path << std::endl;
-    // <=== 打印GetFileType
-    // return FileType::kNonExistant;
+    return FileType::kNonExistant;
   }
 
   if (result & FILE_ATTRIBUTE_DIRECTORY) {
