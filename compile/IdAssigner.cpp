@@ -129,9 +129,9 @@ bool IdAssigner::Consume(IAaptContext* context, ResourceTable* table) {
     for (auto& type : package->types) {
 
       // ===> 遍历并打印每个type的详细信息
-      std::cout << " type->named_type.name: " << type->named_type.name
-                << " type->named_type.type: " << type->named_type.type
-                << " type->entries.size(): " << type->entries.size() << std::endl;
+      std::cout << "type->named_type.name:" << type->named_type.name
+                << " type->named_type.type:" << type->named_type.type
+                << " type->entries.size():" << std::dec << type->entries.size() << std::endl;
       // <=== 遍历并打印每个type的详细信息
 
       for (auto& entry : type->entries) {
@@ -309,7 +309,7 @@ bool IdAssignerContext::ReserveId(const ResourceName& name, ResourceId id,
 
         // ===> 打印分配成功的type和id
         std::cout << "The type " << name.type.type
-                  << " is assigned id of: " << std::hex << (int)id.type_id() << std::endl;
+                  << " is assigned id of " << std::hex << (int)id.type_id() << std::endl;
         // <=== 打印分配成功的type和id
 
       }
