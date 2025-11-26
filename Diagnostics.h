@@ -59,7 +59,7 @@ class StdErrDiagnostics : public android::IDiagnostics {
   }
 
  private:
-  size_t num_errors_ = 0;
+  // size_t num_errors_ = 0;
 
   DISALLOW_COPY_AND_ASSIGN(StdErrDiagnostics);
 };
