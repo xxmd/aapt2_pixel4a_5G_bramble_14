@@ -16,12 +16,12 @@
 
 #include "ResourceParser.h"
 
+#include <android-base/logging.h>
+#include <idmap2/Policies.h>
+
 #include <functional>
 #include <limits>
 #include <sstream>
-
-#include <android-base/logging.h>
-#include <idmap2/Policies.h>
 
 #include "ResourceTable.h"
 #include "ResourceUtils.h"
@@ -29,7 +29,6 @@
 #include "ValueVisitor.h"
 #include "text/Utf8Iterator.h"
 #include "util/ImmutableMap.h"
-
 #include "util/Util.h"
 #include "xml/XmlPullParser.h"
 
@@ -263,8 +262,8 @@ bool ResourceParser::FlattenXmlSubtree(
     const xml::XmlPullParser::Event event = parser->event();
 
     // First take care of any SegmentNodes that should be created.
-    if (event == xml::XmlPullParser::Event::kStartElement
-        || event == xml::XmlPullParser::Event::kEndElement) {
+    if (event == xml::XmlPullParser::Event::kStartElement ||
+        event == xml::XmlPullParser::Event::kEndElement) {
       if (!current_text.empty()) {
         auto segment_node = util::make_unique<SegmentNode>();
         segment_node->data = std::move(current_text);
@@ -494,29 +493,31 @@ bool ResourceParser::ParseResources(xml::XmlPullParser* parser) {
   return !error;
 }
 
-bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
-                                   ParsedResource* out_resource) {
+bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* out_resource) {
   struct ItemTypeFormat {
     ResourceType type;
     uint32_t format;
   };
 
-  using BagParseFunc = std::function<bool(ResourceParser*, xml::XmlPullParser*,
-                                          ParsedResource*)>;
+  using BagParseFunc = std::function<bool(ResourceParser*, xml::XmlPullParser*, ParsedResource*)>;
 
   static const auto elToItemMap = ImmutableMap<std::string, ItemTypeFormat>::CreatePreSorted({
       {"bool", {ResourceType::kBool, android::ResTable_map::TYPE_BOOLEAN}},
       {"color", {ResourceType::kColor, android::ResTable_map::TYPE_COLOR}},
       {"configVarying", {ResourceType::kConfigVarying, android::ResTable_map::TYPE_ANY}},
       {"dimen",
-       {ResourceType::kDimen,
-        android::ResTable_map::TYPE_FLOAT | android::ResTable_map::TYPE_FRACTION |
-            android::ResTable_map::TYPE_DIMENSION}},
+       {ResourceType::kDimen, android::ResTable_map::TYPE_FLOAT |
+                                  android::ResTable_map::TYPE_FRACTION |
+                                  android::ResTable_map::TYPE_DIMENSION}},
+      {"dimen.2",
+       {ResourceType::kDimen2, android::ResTable_map::TYPE_FLOAT |
+                                  android::ResTable_map::TYPE_FRACTION |
+                                  android::ResTable_map::TYPE_DIMENSION}},
       {"drawable", {ResourceType::kDrawable, android::ResTable_map::TYPE_COLOR}},
       {"fraction",
-       {ResourceType::kFraction,
-        android::ResTable_map::TYPE_FLOAT | android::ResTable_map::TYPE_FRACTION |
-            android::ResTable_map::TYPE_DIMENSION}},
+       {ResourceType::kFraction, android::ResTable_map::TYPE_FLOAT |
+                                     android::ResTable_map::TYPE_FRACTION |
+                                     android::ResTable_map::TYPE_DIMENSION}},
       {"integer", {ResourceType::kInteger, android::ResTable_map::TYPE_INTEGER}},
       {"string", {ResourceType::kString, android::ResTable_map::TYPE_STRING}},
   });
@@ -540,8 +541,8 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
       {"string-array", std::mem_fn(&ResourceParser::ParseStringArray)},
       {"style", std::bind(&ResourceParser::ParseStyle, std::placeholders::_1, ResourceType::kStyle,
                           std::placeholders::_2, std::placeholders::_3)},
-      {"style.2", std::bind(&ResourceParser::ParseStyle, std::placeholders::_1, ResourceType::kStyle2,
-                    std::placeholders::_2, std::placeholders::_3)},
+      {"style.2", std::bind(&ResourceParser::ParseStyle, std::placeholders::_1,
+                            ResourceType::kStyle2, std::placeholders::_2, std::placeholders::_3)},
       {"symbol", std::mem_fn(&ResourceParser::ParseSymbol)},
   });
 
@@ -649,7 +650,6 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
   if (can_be_item) {
     const auto item_iter = elToItemMap.find(resource_type);
     if (item_iter != elToItemMap.end()) {
-
       // This is an item, record its type and format and start parsing.
 
       if (!maybe_name) {
@@ -662,19 +662,18 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
           ResourceNamedTypeWithDefaultName(item_iter->second.type).ToResourceNamedType();
       out_resource->name.entry = std::string(maybe_name.value());
 
-      // ===>
-      std::cout << "1.can_be_item"
-                << " resource_type: "<< resource_type
-                << " item_iter->first: "<< item_iter->first
-                << " out_resource->name.type: "<< out_resource->name.type
-                << " out_resource->name.entry: "<< out_resource->name.entry
-                << std::endl;
-      //<===
-
       // Only use the implied format of the type when there is no explicit format.
       if (resource_format == 0u) {
         resource_format = item_iter->second.format;
       }
+
+      // ===>
+      std::cout << "1.can_be_item"
+                << " resource_type: " << resource_type << " item_iter->first: " << item_iter->first
+                << " out_resource->name.type: " << out_resource->name.type
+                << " out_resource->name.entry: " << out_resource->name.entry
+                << " resource_format: " << resource_format << std::endl;
+      //<===
 
       if (!ParseItem(parser, out_resource, resource_format)) {
         return false;
@@ -699,12 +698,10 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
         out_resource->name.entry = std::string(maybe_name.value());
 
         // ===>
-        std::cout << "1.can_be_bag"
-                  << " resource_type: "<< resource_type
-                  << " item_iter->first: "<< bag_iter->first
-                  << " out_resource->name.type: "<< "bag"
-                  << " out_resource->name.entry: "<< out_resource->name.entry
-                  << std::endl;
+        std::cout << "2.can_be_bag"
+                  << " resource_type: " << resource_type << " item_iter->first: " << bag_iter->first
+                  << " out_resource->name.type: " << "bag"
+                  << " out_resource->name.entry: " << out_resource->name.entry << std::endl;
         //<===
       }
 
@@ -730,14 +727,14 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
 
       out_resource->name.type = parsed_type->ToResourceNamedType();
       out_resource->name.entry = std::string(maybe_name.value());
-      out_resource->value = ParseXml(parser, android::ResTable_map::TYPE_REFERENCE, kAllowRawString);
+      out_resource->value =
+          ParseXml(parser, android::ResTable_map::TYPE_REFERENCE, kAllowRawString);
 
       // ===>
       std::cout << "3.can_be_item"
-                << " resource_type: "<< resource_type
-                << " out_resource->name.type: "<< out_resource->name.type
-                << " out_resource->name.entry: "<< out_resource->name.entry
-                << std::endl;
+                << " resource_type: " << resource_type
+                << " out_resource->name.type: " << out_resource->name.type
+                << " out_resource->name.entry: " << out_resource->name.entry << std::endl;
       //<===
 
       if (!out_resource->value) {
@@ -755,8 +752,7 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
   return false;
 }
 
-bool ResourceParser::ParseItem(xml::XmlPullParser* parser,
-                               ParsedResource* out_resource,
+bool ResourceParser::ParseItem(xml::XmlPullParser* parser, ParsedResource* out_resource,
                                const uint32_t format) {
   if (format == android::ResTable_map::TYPE_STRING) {
     return ParseString(parser, out_resource);
@@ -860,8 +856,7 @@ std::unique_ptr<Item> ResourceParser::ParseXml(const FlattenedXmlSubTree& xmlsub
   return {};
 }
 
-bool ResourceParser::ParseString(xml::XmlPullParser* parser,
-                                 ParsedResource* out_resource) {
+bool ResourceParser::ParseString(xml::XmlPullParser* parser, ParsedResource* out_resource) {
   bool formatted = true;
   if (std::optional<StringPiece> formatted_attr = xml::FindAttribute(parser, "formatted")) {
     std::optional<bool> maybe_formatted = ResourceUtils::ParseBool(formatted_attr.value());
@@ -884,8 +879,7 @@ bool ResourceParser::ParseString(xml::XmlPullParser* parser,
     translatable = maybe_translatable.value();
   }
 
-  out_resource->value =
-      ParseXml(parser, android::ResTable_map::TYPE_STRING, kNoRawString);
+  out_resource->value = ParseXml(parser, android::ResTable_map::TYPE_STRING, kNoRawString);
   if (!out_resource->value) {
     diag_->Error(android::DiagMessage(out_resource->source) << "not a valid string");
     return false;
@@ -1125,8 +1119,7 @@ bool ResourceParser::ParsePublicGroup(xml::XmlPullParser* parser, ParsedResource
                         });
 }
 
-bool ResourceParser::ParseSymbolImpl(xml::XmlPullParser* parser,
-                                     ParsedResource* out_resource) {
+bool ResourceParser::ParseSymbolImpl(xml::XmlPullParser* parser, ParsedResource* out_resource) {
   std::optional<StringPiece> maybe_type = xml::FindNonEmptyAttribute(parser, "type");
   if (!maybe_type) {
     diag_->Error(android::DiagMessage(out_resource->source)
@@ -1191,8 +1184,7 @@ bool ResourceParser::ParseOverlayable(xml::XmlPullParser* parser, ParsedResource
 
   // Create a overlayable entry grouping that represents this <overlayable>
   auto overlayable = std::make_shared<Overlayable>(
-      overlayable_name.value(), (overlayable_actor) ? overlayable_actor.value() : "",
-      source_);
+      overlayable_name.value(), (overlayable_actor) ? overlayable_actor.value() : "", source_);
 
   bool error = false;
   std::string comment;
@@ -1203,8 +1195,8 @@ bool ResourceParser::ParseOverlayable(xml::XmlPullParser* parser, ParsedResource
     if (event == xml::XmlPullParser::Event::kEndElement && parser->depth() == start_depth) {
       // Break the loop when exiting the <overlayable>
       break;
-    } else if (event == xml::XmlPullParser::Event::kEndElement
-               && parser->depth() == start_depth + 1) {
+    } else if (event == xml::XmlPullParser::Event::kEndElement &&
+               parser->depth() == start_depth + 1) {
       // Clear the current policies when exiting the <policy> tags
       current_policies = PolicyFlags::NONE;
       continue;
@@ -1278,11 +1270,9 @@ bool ResourceParser::ParseOverlayable(xml::XmlPullParser* parser, ParsedResource
         // policies. Items within the policy tag will have the specified policy.
         for (StringPiece part : util::Tokenize(maybe_type.value(), '|')) {
           StringPiece trimmed_part = util::TrimWhitespace(part);
-          const auto policy = std::find_if(kPolicyStringToFlag.begin(),
-                                           kPolicyStringToFlag.end(),
-                                           [trimmed_part](const auto& it) {
-                                             return trimmed_part == it.first;
-                                           });
+          const auto policy =
+              std::find_if(kPolicyStringToFlag.begin(), kPolicyStringToFlag.end(),
+                           [trimmed_part](const auto& it) { return trimmed_part == it.first; });
           if (policy == kPolicyStringToFlag.end()) {
             diag_->Error(android::DiagMessage(element_source)
                          << "<policy> has unsupported type '" << trimmed_part << "'");
@@ -1321,13 +1311,12 @@ bool ResourceParser::ParseAddResource(xml::XmlPullParser* parser, ParsedResource
   return false;
 }
 
-bool ResourceParser::ParseAttr(xml::XmlPullParser* parser,
-                               ParsedResource* out_resource) {
+bool ResourceParser::ParseAttr(xml::XmlPullParser* parser, ParsedResource* out_resource) {
   return ParseAttrImpl(parser, out_resource, false);
 }
 
-bool ResourceParser::ParseAttrImpl(xml::XmlPullParser* parser,
-                                   ParsedResource* out_resource, bool weak) {
+bool ResourceParser::ParseAttrImpl(xml::XmlPullParser* parser, ParsedResource* out_resource,
+                                   bool weak) {
   out_resource->name.type =
       ResourceNamedTypeWithDefaultName(ResourceType::kAttr).ToResourceNamedType();
 
@@ -1387,8 +1376,7 @@ bool ResourceParser::ParseAttrImpl(xml::XmlPullParser* parser,
     }
   }
 
-  if ((maybe_min || maybe_max) &&
-      (type_mask & android::ResTable_map::TYPE_INTEGER) == 0) {
+  if ((maybe_min || maybe_max) && (type_mask & android::ResTable_map::TYPE_INTEGER) == 0) {
     diag_->Error(android::DiagMessage(source_.WithLine(parser->line_number()))
                  << "'min' and 'max' can only be used when format='integer'");
     return false;
@@ -1629,8 +1617,7 @@ bool ResourceParser::ParseStringArray(xml::XmlPullParser* parser, ParsedResource
   return ParseArrayImpl(parser, out_resource, android::ResTable_map::TYPE_STRING);
 }
 
-bool ResourceParser::ParseArrayImpl(xml::XmlPullParser* parser,
-                                    ParsedResource* out_resource,
+bool ResourceParser::ParseArrayImpl(xml::XmlPullParser* parser, ParsedResource* out_resource,
                                     const uint32_t typeMask) {
   out_resource->name.type =
       ResourceNamedTypeWithDefaultName(ResourceType::kArray).ToResourceNamedType();
@@ -1685,8 +1672,7 @@ bool ResourceParser::ParseArrayImpl(xml::XmlPullParser* parser,
   return true;
 }
 
-bool ResourceParser::ParsePlural(xml::XmlPullParser* parser,
-                                 ParsedResource* out_resource) {
+bool ResourceParser::ParsePlural(xml::XmlPullParser* parser, ParsedResource* out_resource) {
   out_resource->name.type =
       ResourceNamedTypeWithDefaultName(ResourceType::kPlurals).ToResourceNamedType();
 
@@ -1712,8 +1698,7 @@ bool ResourceParser::ParsePlural(xml::XmlPullParser* parser,
         continue;
       }
 
-      StringPiece trimmed_quantity =
-          util::TrimWhitespace(maybe_quantity.value());
+      StringPiece trimmed_quantity = util::TrimWhitespace(maybe_quantity.value());
       size_t index = 0;
       if (trimmed_quantity == "zero") {
         index = Plural::Zero;
@@ -1742,8 +1727,8 @@ bool ResourceParser::ParsePlural(xml::XmlPullParser* parser,
         continue;
       }
 
-      if (!(plural->values[index] = ParseXml(
-                parser, android::ResTable_map::TYPE_STRING, kNoRawString))) {
+      if (!(plural->values[index] =
+                ParseXml(parser, android::ResTable_map::TYPE_STRING, kNoRawString))) {
         error = true;
         continue;
       }
