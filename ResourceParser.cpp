@@ -514,6 +514,11 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
                                   android::ResTable_map::TYPE_FRACTION |
                                   android::ResTable_map::TYPE_DIMENSION}},
       {"drawable", {ResourceType::kDrawable, android::ResTable_map::TYPE_COLOR}},
+      {"drawable.2", {ResourceType::kDrawable2, android::ResTable_map::TYPE_COLOR}},
+      {"drawable.3", {ResourceType::kDrawable3, android::ResTable_map::TYPE_COLOR}},
+      {"drawable.4", {ResourceType::kDrawable4, android::ResTable_map::TYPE_COLOR}},
+      {"drawable.5", {ResourceType::kDrawable5, android::ResTable_map::TYPE_COLOR}},
+      {"drawable.6", {ResourceType::kDrawable6, android::ResTable_map::TYPE_COLOR}},
       {"fraction",
        {ResourceType::kFraction, android::ResTable_map::TYPE_FLOAT |
                                      android::ResTable_map::TYPE_FRACTION |
