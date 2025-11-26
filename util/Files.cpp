@@ -57,6 +57,9 @@ FileType GetFileType(const std::string& path) {
     return FileType::kNonExistant;
   }
 
+  // ===> 打印GetFileType
+  std::wcout << L"path_utf16: " << path_utf16 << std::endl;
+  // <=== 打印GetFileType
   DWORD result = GetFileAttributesW(path_utf16.c_str());
   if (result == INVALID_FILE_ATTRIBUTES) {
     // ===> 打印GetFileType
