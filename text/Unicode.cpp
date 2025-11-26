@@ -109,13 +109,13 @@ bool IsValidResourceEntryName(StringPiece str) {
 
   // Resources are allowed to start with '_'
   const char32_t first_codepoint = iter.Next();
-  if (!IsXidStart(first_codepoint) && first_codepoint != U'_') {
+  if (!IsXidStart(first_codepoint) && first_codepoint != U'_' && first_codepoint != U'$') {
     return false;
   }
 
   while (iter.HasNext()) {
     const char32_t codepoint = iter.Next();
-    if (!IsXidContinue(codepoint) && codepoint != U'.' && codepoint != U'-') {
+    if (!IsXidContinue(codepoint) && codepoint != U'.' && codepoint != U'-' && codepoint != U'$') {
       return false;
     }
   }
