@@ -709,7 +709,7 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
 
       out_resource->name.type = parsed_type->ToResourceNamedType();
       out_resource->name.entry = std::string(maybe_name.value());
-      out_resource->value = ParseXml(parser, android::ResTable_map::TYPE_REFERENCE, kNoRawString);
+      out_resource->value = ParseXml(parser, android::ResTable_map::TYPE_REFERENCE, kAllowRawString);
       if (!out_resource->value) {
         diag_->Error(android::DiagMessage(out_resource->source)
                      << "invalid value for type '" << *parsed_type << "'. Expected a reference");
