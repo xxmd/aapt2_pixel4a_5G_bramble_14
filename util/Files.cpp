@@ -63,7 +63,7 @@ FileType GetFileType(const std::string& path) {
     std::wcout << L"path_utf16: " << path_utf16 << std::endl;
     std::cout << "INVALID_FILE_ATTRIBUTES " << path << std::endl;
     // <=== 打印GetFileType
-    return FileType::kNonExistant;
+    // return FileType::kNonExistant;
   }
 
   if (result & FILE_ATTRIBUTE_DIRECTORY) {
