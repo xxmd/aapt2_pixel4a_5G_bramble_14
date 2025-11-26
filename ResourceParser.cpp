@@ -540,6 +540,8 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser,
       {"string-array", std::mem_fn(&ResourceParser::ParseStringArray)},
       {"style", std::bind(&ResourceParser::ParseStyle, std::placeholders::_1, ResourceType::kStyle,
                           std::placeholders::_2, std::placeholders::_3)},
+      {"style.2", std::bind(&ResourceParser::ParseStyle, std::placeholders::_1, ResourceType::kStyle2,
+                    std::placeholders::_2, std::placeholders::_3)},
       {"symbol", std::mem_fn(&ResourceParser::ParseSymbol)},
   });
 

@@ -275,12 +275,13 @@ std::optional<Reference> ParseStyleParentReference(StringPiece str, std::string*
   if (!type_str.empty()) {
     // If we have a type, make sure it is a Style.
     const ResourceType* parsed_type = ParseResourceType(type_str);
-    if (!parsed_type || *parsed_type != ResourceType::kStyle) {
+    if (!parsed_type || (*parsed_type != ResourceType::kStyle && *parsed_type != ResourceType::kStyle2)) {
       std::stringstream err;
       err << "invalid resource type '" << type_str << "' for parent of style";
       *out_error = err.str();
       return {};
     }
+    ref.type = ResourceNamedTypeWithDefaultName(*parsed_type);
   }
 
   if (!has_leading_identifiers && ref.package.empty() && !type_str.empty()) {
