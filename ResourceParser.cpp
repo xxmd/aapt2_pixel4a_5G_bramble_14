@@ -673,17 +673,18 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
         resource_format = item_iter->second.format;
       }
 
+      if (!ParseItem(parser, out_resource, resource_format)) {
+        return false;
+      }
+
       // ===>
       std::cout << "1.can_be_item"
                 << " resource_type: " << resource_type << " item_iter->first: " << item_iter->first
                 << " out_resource->name.type: " << out_resource->name.type
                 << " out_resource->name.entry: " << out_resource->name.entry
+                << " out_resource->value: " << out_resource->value
                 << " resource_format: " << resource_format << std::endl;
       //<===
-
-      if (!ParseItem(parser, out_resource, resource_format)) {
-        return false;
-      }
       return true;
     }
   }
