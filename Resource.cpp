@@ -102,6 +102,8 @@ StringPiece to_string(ResourceType type) {
       return "xml";
 
       // 补充case分支
+    case ResourceType::kColor2:
+      return "color.2";
     case ResourceType::kDimen2:
       return "dimen.2";
     case ResourceType::kDrawable2:
@@ -154,6 +156,7 @@ static const std::map<StringPiece, ResourceType> sResourceTypeMap{
     {"xml", ResourceType::kXml},
 
     // 非标资源类型
+    {"color.2", ResourceType::kColor2},
     {"dimen.2", ResourceType::kDimen2},
     {"drawable.2", ResourceType::kDrawable2},
     {"drawable.3", ResourceType::kDrawable3},

@@ -69,6 +69,7 @@ enum class ResourceType {
   kXml,
 
   // 额外非标准资源类型
+  kColor2,
   kDimen2,
   kDrawable2,
   kDrawable3,

@@ -504,6 +504,7 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
   static const auto elToItemMap = ImmutableMap<std::string, ItemTypeFormat>::CreatePreSorted({
       {"bool", {ResourceType::kBool, android::ResTable_map::TYPE_BOOLEAN}},
       {"color", {ResourceType::kColor, android::ResTable_map::TYPE_COLOR}},
+      {"color2", {ResourceType::kColor2, android::ResTable_map::TYPE_COLOR}},
       {"configVarying", {ResourceType::kConfigVarying, android::ResTable_map::TYPE_ANY}},
       {"dimen",
        {ResourceType::kDimen, android::ResTable_map::TYPE_FLOAT |
