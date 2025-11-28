@@ -703,13 +703,6 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
         }
 
         out_resource->name.entry = std::string(maybe_name.value());
-
-        // ===>
-        std::cout << "2.can_be_bag"
-                  << " resource_type: " << resource_type << " item_iter->first: " << bag_iter->first
-                  << " out_resource->name.type: " << "bag"
-                  << " out_resource->name.entry: " << out_resource->name.entry << std::endl;
-        //<===
       }
 
       // Call the associated parse method. The type will be filled in by the
@@ -717,6 +710,15 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
       if (!bag_iter->second(this, parser, out_resource)) {
         return false;
       }
+
+      // ===>
+      std::cout << "2.can_be_bag"
+                << " resource_type: " << resource_type << " item_iter->first: " << bag_iter->first
+                << " out_resource->name.type: " << out_resource->name.type
+                << " out_resource->name.entry: " << out_resource->name.entry
+                << " out_resource->value: " << out_resource->value
+                << std::endl;
+      //<===
       return true;
     }
   }
