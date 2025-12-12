@@ -48,6 +48,8 @@ constexpr const char* kStagingPublicGroupFinalTag = "staging-public-group-final"
 
 constexpr const char* sXliffNamespaceUri = "urn:oasis:names:tc:xliff:document:1.2";
 
+bool ENABLE_LOG = false;   // 设为 false 就不打印
+
 // Returns true if the element is <skip> or <eat-comment> and can be safely ignored.
 static bool ShouldIgnoreElement(StringPiece ns, StringPiece name) {
   return ns.empty() && (name == "skip" || name == "eat-comment");
@@ -678,12 +680,14 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
       }
 
       // ===>
-      std::cout << "1.can_be_item"
+      if (ENANLE_LOG) {
+        std::cout << "1.can_be_item"
                 << " resource_type: " << resource_type << " item_iter->first: " << item_iter->first
                 << " out_resource->name.type: " << out_resource->name.type
                 << " out_resource->name.entry: " << out_resource->name.entry
                 << " out_resource->value: " << out_resource->value
                 << " resource_format: " << resource_format << std::endl;
+      }
       //<===
       return true;
     }
