@@ -680,7 +680,7 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
       }
 
       // ===>
-      if (ENANLE_LOG) {
+      if (ENABLE_LOG) {
         std::cout << "1.can_be_item"
                 << " resource_type: " << resource_type << " item_iter->first: " << item_iter->first
                 << " out_resource->name.type: " << out_resource->name.type
