@@ -308,8 +308,8 @@ bool IdAssignerContext::ReserveId(const ResourceName& name, ResourceId id,
       if (non_staged_type.second) {
 
         // ===> 打印分配成功的type和id
-        std::cout << "The type " << name.type.type
-                  << " is assigned id of " << std::hex << (int)id.type_id() << std::endl;
+        //std::cout << "The type " << name.type.type
+        //          << " is assigned id of " << std::hex << (int)id.type_id() << std::endl;
         // <=== 打印分配成功的type和id
 
       }

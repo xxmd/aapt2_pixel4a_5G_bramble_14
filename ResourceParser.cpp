@@ -716,13 +716,15 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
       }
 
       // ===>
-      std::cout << "2.can_be_bag"
-                << " resource_type: " << resource_type
-                << " bag_iter->first: " << bag_iter->first
-                << " out_resource->name.type: " << out_resource->name.type
-                << " out_resource->name.entry: " << out_resource->name.entry
-                << " out_resource->value: " << out_resource->value
-                << std::endl;
+      if (ENABLE_LOG) {
+          std::cout << "2.can_be_bag"
+                    << " resource_type: " << resource_type
+                    << " bag_iter->first: " << bag_iter->first
+                    << " out_resource->name.type: " << out_resource->name.type
+                    << " out_resource->name.entry: " << out_resource->name.entry
+                    << " out_resource->value: " << out_resource->value
+                    << std::endl;
+      }
       //<===
       return true;
     }
@@ -745,10 +747,12 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
           ParseXml(parser, android::ResTable_map::TYPE_REFERENCE, kAllowRawString);
 
       // ===>
-      std::cout << "3.can_be_item"
-                << " resource_type: " << resource_type
-                << " out_resource->name.type: " << out_resource->name.type
-                << " out_resource->name.entry: " << out_resource->name.entry << std::endl;
+      if (ENABLE_LOG) {
+          std::cout << "3.can_be_item"
+                    << " resource_type: " << resource_type
+                    << " out_resource->name.type: " << out_resource->name.type
+                    << " out_resource->name.entry: " << out_resource->name.entry << std::endl;
+      }
       //<===
 
       if (!out_resource->value) {
