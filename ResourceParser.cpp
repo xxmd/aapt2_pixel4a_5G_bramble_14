@@ -713,7 +713,8 @@ bool ResourceParser::ParseResource(xml::XmlPullParser* parser, ParsedResource* o
 
       // ===>
       std::cout << "2.can_be_bag"
-                << " resource_type: " << resource_type << " item_iter->first: " << bag_iter->first
+                << " resource_type: " << resource_type
+                << " bag_iter->first: " << bag_iter->first
                 << " out_resource->name.type: " << out_resource->name.type
                 << " out_resource->name.entry: " << out_resource->name.entry
                 << " out_resource->value: " << out_resource->value
